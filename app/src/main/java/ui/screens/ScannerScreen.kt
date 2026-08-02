@@ -51,6 +51,7 @@ fun ScannerScreen(
 
                     val barkod = barcode.rawValue ?: return@addOnSuccessListener
 
+
                     RetrofitClient.api.urunAra(
                         action = "urunAra",
                         barkod = barkod
@@ -80,13 +81,13 @@ fun ScannerScreen(
 
                                     Toast.makeText(
                                         context,
-                                        "Ürün bulunamadı",
-                                        Toast.LENGTH_SHORT
+                                        urun.toString(),
+                                        Toast.LENGTH_LONG
                                     ).show()
 
                                 }
 
-                                navController.popBackStack()
+                                // navController.popBackStack()
 
                             }
 
