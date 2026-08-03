@@ -45,6 +45,7 @@ fun AppNavigation() {
         ) { backStackEntry ->
 
             ProductScreen(
+                navController = navController,
                 barkod = backStackEntry.arguments?.getString("barkod") ?: "",
                 urunKodu = backStackEntry.arguments?.getString("urunKodu") ?: "",
                 urunAdi = backStackEntry.arguments?.getString("urunAdi") ?: "",

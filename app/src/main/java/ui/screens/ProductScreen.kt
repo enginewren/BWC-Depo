@@ -41,6 +41,16 @@ import android.net.Uri
 import androidx.compose.ui.text.input.KeyboardType
 import com.blackwhitecircle.depo.ui.components.MinimalTextField
 import com.blackwhitecircle.depo.ui.components.PrimaryActionButton
+import com.blackwhitecircle.depo.network.RetrofitClient
+import com.blackwhitecircle.depo.network.SaveResponse
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import androidx.navigation.NavController
 
 /**
  * Stok giriş alanı tanımı.
@@ -54,6 +64,7 @@ private data class QuantityField(
     val key: String,
     val label: String,
     val keyboardType: KeyboardType = KeyboardType.Number
+
 )
 
 /**
@@ -78,16 +89,20 @@ private val quantityFields = listOf(
 
 @Composable
 fun ProductScreen(
-    barkod: String,
-    urunKodu: String,
-    urunAdi: String,
-    birim: String
+navController: NavController,
+barkod: String,
+urunKodu: String,
+urunAdi: String,
+birim: String
 ) {
 
     var fieldValues by remember {
         mutableStateOf(quantityFields.associate { it.key to "" })
-    }
 
+    }
+    val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -148,6 +163,8 @@ fun ProductScreen(
             text = "KAYDET",
             onClick = {
                 kaydet(
+                    navController = navController,
+                    context = context,
                     barkod = barkod,
                     urunKodu = urunKodu,
                     urunAdi = Uri.decode(urunAdi),
@@ -172,14 +189,45 @@ fun ProductScreen(
  * Şu an için hiçbir network çağrısı yapılmıyor; sadece iskelet.
  */
 private fun kaydet(
+    navController: NavController,
+    context: Context,
     barkod: String,
     urunKodu: String,
     urunAdi: String,
     birim: String,
     fieldValues: Map<String, String>
-) {
-    // TODO: Apps Script action="kaydet"
-    // Network çağrısı burada yapılmayacak. API hazır olduğunda bağlanacak.
+){
+
+    RetrofitClient.api.kaydet(
+        barkod = barkod,
+        urunKodu = urunKodu,
+        urunAdi = urunAdi,
+        birim = birim,
+        adet = fieldValues["adet"] ?: "",
+        koli = fieldValues["koli"] ?: "",
+        palet = fieldValues["palet"] ?: ""
+    ).enqueue(object : retrofit2.Callback<SaveResponse> {
+
+        override fun onResponse(
+            call: retrofit2.Call<SaveResponse>,
+            response: retrofit2.Response<SaveResponse>
+        ) {
+            Toast.makeText(
+
+                context,
+                "Kaydedildi",
+                Toast.LENGTH_SHORT
+            ).show()
+            navController.popBackStack()
+        }
+
+        override fun onFailure(
+            call: retrofit2.Call<SaveResponse>,
+            t: Throwable
+        ) {
+        }
+
+    })
 }
 
 @Composable
