@@ -17,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.blackwhitecircle.depo.ui.components.BottomBar
+import com.blackwhitecircle.depo.ui.components.CommandBar
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.content.Context
@@ -46,11 +46,16 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            BottomBar(
-                onManualClick = {
+            CommandBar(
+                leftText = "GİR",
+                centerText = "OKUT",
+                rightText = "AYAR",
+
+                onLeftClick = {
 
                 },
-                onScanClick = {
+
+                onCenterClick = {
 
                     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
@@ -66,7 +71,8 @@ fun HomeScreen(
                     navController.navigate("scanner")
 
                 },
-                onSettingsClick = {
+
+                onRightClick = {
 
                 }
             )

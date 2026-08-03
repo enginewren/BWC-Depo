@@ -57,11 +57,11 @@ fun MinimalTextField(
 
         Text(
             text = label,
-            color = Color.Gray,
-            fontSize = 14.sp
+            color = Color.White.copy(alpha = 0.85f),
+            fontSize = 13.sp
         )
 
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(1.dp))
 
         BasicTextField(
             value = value,
@@ -69,14 +69,14 @@ fun MinimalTextField(
             singleLine = true,
             textStyle = TextStyle(
                 color = Color.White,
-                fontSize = 22.sp
+                fontSize = 20.sp
             ),
             cursorBrush = SolidColor(Color.White),
             keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         Box(
             modifier = Modifier

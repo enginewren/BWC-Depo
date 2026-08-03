@@ -51,6 +51,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import androidx.navigation.NavController
+import com.blackwhitecircle.depo.ui.components.CommandBar
 
 /**
  * Stok giriş alanı tanımı.
@@ -137,7 +138,7 @@ birim: String
                 .background(Color.DarkGray)
         )
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(8.dp))
 
         quantityFields.forEach { field ->
 
@@ -152,16 +153,23 @@ birim: String
                 keyboardType = field.keyboardType,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 20.dp)
+                    .padding(bottom = 8.dp)
             )
 
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(8.dp))
 
-        PrimaryActionButton(
-            text = "KAYDET",
-            onClick = {
+        CommandBar(
+            leftText = "GERİ",
+            centerText = "KAYDET",
+            rightText = "İPTAL",
+
+            onLeftClick = {
+                navController.popBackStack()
+            },
+
+            onCenterClick = {
                 kaydet(
                     navController = navController,
                     context = context,
@@ -171,6 +179,10 @@ birim: String
                     birim = birim,
                     fieldValues = fieldValues
                 )
+            },
+
+            onRightClick = {
+                navController.popBackStack()
             }
         )
 
@@ -250,7 +262,7 @@ private fun ProductItem(
             fontSize = 22.sp
         )
 
-        Spacer(Modifier.height(18.dp))
+        Spacer(Modifier.height(10.dp))
 
     }
 
