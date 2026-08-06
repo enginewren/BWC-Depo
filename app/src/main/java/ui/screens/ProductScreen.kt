@@ -21,7 +21,7 @@ BlackWhiteCircle
 */
 
 package com.blackwhitecircle.depo.ui.screens
-
+import kotlinx.coroutines.delay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -44,14 +44,19 @@ import com.blackwhitecircle.depo.ui.components.PrimaryActionButton
 import com.blackwhitecircle.depo.network.RetrofitClient
 import com.blackwhitecircle.depo.network.SaveResponse
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import androidx.navigation.NavController
 import com.blackwhitecircle.depo.ui.components.CommandBar
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.Alignment
+import com.blackwhitecircle.depo.ui.components.StatusOverlay
+import com.blackwhitecircle.depo.ui.components.StatusType
+import kotlinx.coroutines.delay
 
 /**
  * Stok giriş alanı tanımı.
@@ -98,16 +103,26 @@ birim: String
 ) {
 
     var fieldValues by remember {
+
         mutableStateOf(quantityFields.associate { it.key to "" })
 
     }
     val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    Column(
+    val adetFocus = remember { FocusRequester() }
+    val koliFocus = remember { FocusRequester() }
+    val paletFocus = remember { FocusRequester() }
+      val scope = rememberCoroutineScope()
+    var showStatus by remember { mutableStateOf(false) }
+    var statusType by remember { mutableStateOf(StatusType.SAVING) }
+    var isSaving by remember { mutableStateOf(false) }
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
+    ) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(20.dp)
     ) {
@@ -151,6 +166,34 @@ birim: String
                     }
                 },
                 keyboardType = field.keyboardType,
+
+                imeAction =
+
+                    if (field.key == "palet")
+                        ImeAction.Done
+                    else
+                        ImeAction.Next,
+                focusRequester =
+                    when (field.key) {
+                        "adet" -> adetFocus
+                        "koli" -> koliFocus
+                        else -> paletFocus
+                    },
+                keyboardActions = KeyboardActions(
+
+                    onNext = {
+
+                        when (field.key) {
+
+                            "adet" -> koliFocus.requestFocus()
+
+                            "koli" -> paletFocus.requestFocus()
+
+                        }
+
+                    }
+
+                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp)
@@ -159,34 +202,102 @@ birim: String
         }
 
         Spacer(Modifier.height(8.dp))
+    }
 
-        CommandBar(
-            leftText = "GERİ",
-            centerText = "KAYDET",
-            rightText = "İPTAL",
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(bottom = 36.dp)
+        ) {
 
-            onLeftClick = {
-                navController.popBackStack()
-            },
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color.DarkGray)
+            )
 
-            onCenterClick = {
-                kaydet(
-                    navController = navController,
-                    context = context,
-                    barkod = barkod,
-                    urunKodu = urunKodu,
-                    urunAdi = Uri.decode(urunAdi),
-                    birim = birim,
-                    fieldValues = fieldValues
-                )
-            },
+            CommandBar(
+                enabled = !isSaving,
+                leftText = "GERİ",
+                centerText = "KAYDET",
+                rightText = "İPTAL",
 
-            onRightClick = {
-                navController.popBackStack()
-            }
+                onLeftClick = {
+                    navController.popBackStack()
+                },
+
+                onCenterClick = {
+
+                    if (isSaving) return@CommandBar
+
+                    isSaving = true
+
+                    statusType = StatusType.SAVING
+                    showStatus = true
+
+                    kaydet(
+                        navController = navController,
+                        context = context,
+                        barkod = barkod,
+                        urunKodu = urunKodu,
+                        urunAdi = Uri.decode(urunAdi),
+                        birim = birim,
+                        fieldValues = fieldValues,
+
+                        onSuccess = {
+
+                            statusType = StatusType.SUCCESS
+
+                            scope.launch {
+
+                                delay(800)
+
+                                showStatus = false
+                                isSaving = false
+                                navController.navigate("home") {
+                                    popUpTo("home") {
+                                        inclusive = false
+                                    }
+                                    launchSingleTop = true
+                                }
+
+                            }
+
+                        },
+
+                                onError = {
+
+                            statusType = StatusType.ERROR
+
+                            scope.launch {
+                                delay(1200)
+
+                                showStatus = false
+                                isSaving = false
+
+
+
+                            }
+
+                        }
+                    )
+                },
+
+                onRightClick = {
+                    navController.popBackStack()
+                }
+            )
+
+
+
+
+        }
+        StatusOverlay(
+            visible = showStatus,
+            status = statusType
         )
-
-        Spacer(Modifier.height(12.dp))
 
     }
 
@@ -207,7 +318,9 @@ private fun kaydet(
     urunKodu: String,
     urunAdi: String,
     birim: String,
-    fieldValues: Map<String, String>
+    fieldValues: Map<String, String>,
+    onSuccess: () -> Unit,
+    onError: () -> Unit
 ){
 
     RetrofitClient.api.kaydet(
@@ -224,23 +337,29 @@ private fun kaydet(
             call: retrofit2.Call<SaveResponse>,
             response: retrofit2.Response<SaveResponse>
         ) {
-            Toast.makeText(
 
-                context,
-                "Kaydedildi",
-                Toast.LENGTH_SHORT
-            ).show()
-            navController.popBackStack()
+            if (response.isSuccessful) {
+
+                onSuccess()
+
+            } else {
+
+
+            }
+
         }
 
         override fun onFailure(
             call: retrofit2.Call<SaveResponse>,
             t: Throwable
-        ) {
+        ) {onError
+            onError()
         }
 
     })
+
 }
+
 
 @Composable
 private fun ProductItem(

@@ -19,25 +19,24 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun CommandBar(
+    modifier: Modifier = Modifier,
     leftText: String,
     centerText: String,
     rightText: String,
+    enabled: Boolean = true,
     onLeftClick: () -> Unit = {},
     onCenterClick: () -> Unit = {},
     onRightClick: () -> Unit = {}
 ) {
 
-    Column {
-
-        HorizontalDivider(
-            thickness = 1.dp,
-            color = Color.DarkGray
-        )
+    Column(
+        modifier = modifier
+    ) {
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 14.dp)
+                .padding(top = 8.dp,)
         ) {
 
             Box(
@@ -47,32 +46,38 @@ fun CommandBar(
 
                 Text(
                     text = leftText,
-                    color = Color.White,
+                    color = if (enabled) Color.White else Color.Gray,
                     fontSize = 22.sp,
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .padding(start = 24.dp)
-                        .clickable { onLeftClick() }
+                        .clickable(enabled = enabled) {
+                            onLeftClick()
+                        }
                 )
 
                 Text(
                     text = centerText,
-                    color = Color.White,
+                    color = if (enabled) Color.White else Color.Gray,
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .clickable { onCenterClick() }
+                        .clickable(enabled = enabled) {
+                            onCenterClick()
+                        }
                 )
 
                 Text(
                     text = rightText,
-                    color = Color.White,
+                    color = if (enabled) Color.White else Color.Gray,
                     fontSize = 22.sp,
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(end = 24.dp)
-                        .clickable { onRightClick() }
+                        .clickable(enabled = enabled) {
+                            onRightClick()
+                        }
                 )
             }
         }

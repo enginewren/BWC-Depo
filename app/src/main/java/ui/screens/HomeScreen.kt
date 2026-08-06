@@ -22,6 +22,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.content.Context
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.foundation.layout.fillMaxWidth
 
 @Composable
 fun HomeScreen(
@@ -37,7 +38,7 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
+                .padding(start = 24.dp, top = 24.dp, end = 24.dp, bottom = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -46,37 +47,52 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            CommandBar(
-                leftText = "GİR",
-                centerText = "OKUT",
-                rightText = "AYAR",
+            Column {
 
-                onLeftClick = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(Color.DarkGray)
+                )
 
-                },
+                CommandBar(
+                    leftText = "GİR",
+                    centerText = "OKUT",
+                    rightText = "AYAR",
 
-                onCenterClick = {
+                    onLeftClick = {
 
-                    val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                    },
 
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                        vibrator.vibrate(
-                            VibrationEffect.createWaveform(
-                                longArrayOf(0, 60, 40, 60),
-                                -1
+                    onCenterClick = {
+
+                        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            vibrator.vibrate(
+                                VibrationEffect.createWaveform(
+                                    longArrayOf(0, 60, 40, 60),
+                                    -1
+                                )
                             )
-                        )
+                        }
+
+                        navController.navigate("scanner")
+                    },
+
+                    onRightClick = {
+
                     }
+                )
 
-                    navController.navigate("scanner")
-
-                },
-
-                onRightClick = {
-
-                }
-            )
-
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(Color.DarkGray)
+                )
+            }
         }
 
     }

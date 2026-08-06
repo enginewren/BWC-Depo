@@ -35,6 +35,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 
 /**
  * Minimal, kart görünümü olmayan giriş alanı.
@@ -51,7 +55,10 @@ fun MinimalTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    keyboardType: KeyboardType = KeyboardType.Number
+    keyboardType: KeyboardType = KeyboardType.Number,
+    imeAction: ImeAction = ImeAction.Next,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    focusRequester: FocusRequester = FocusRequester()
 ) {
     Column(modifier = modifier) {
 
@@ -72,8 +79,16 @@ fun MinimalTextField(
                 fontSize = 20.sp
             ),
             cursorBrush = SolidColor(Color.White),
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-            modifier = Modifier.fillMaxWidth()
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardType,
+                imeAction = imeAction
+            ),
+
+            keyboardActions = keyboardActions,
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+
         )
 
         Spacer(modifier = Modifier.height(4.dp))

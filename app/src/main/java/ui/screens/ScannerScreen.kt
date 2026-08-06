@@ -18,6 +18,10 @@ import com.blackwhitecircle.depo.network.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 
 @Composable
 fun ScannerScreen(
@@ -37,15 +41,18 @@ fun ScannerScreen(
         context,
         options
     )
-
+    var scanRequested by remember {
+        mutableStateOf(false)
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
     ) {
 
-        LaunchedEffect(Unit) {
 
+        LaunchedEffect(scanRequested) {
+         
             scanner.startScan()
                 .addOnSuccessListener { barcode ->
 
