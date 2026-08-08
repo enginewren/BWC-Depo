@@ -27,6 +27,7 @@ import com.blackwhitecircle.depo.ui.components.AboutSettingsCard
 import com.blackwhitecircle.depo.ui.components.UserGuideCard
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import com.blackwhitecircle.depo.ui.components.VibrationSettingsCard
 
 @Composable
 fun SettingsScreen() {
@@ -92,18 +93,27 @@ fun SettingsScreen() {
             }
             Spacer(modifier = Modifier.height(20.dp))
 
+
             SectionDivider()
 
             Spacer(modifier = Modifier.height(20.dp))
 
             SettingCard(
-                title = "HAKKINDA"
+                title = "TİTREŞİM"
             ) {
-                AboutSettingsCard()
+                VibrationSettingsCard()
             }
             Spacer(modifier = Modifier.height(20.dp))
 
             SectionDivider()
+
+            SettingCard(
+
+                title = "HAKKINDA"
+            ) {
+                AboutSettingsCard()
+            }
+
 
             Spacer(modifier = Modifier.height(20.dp))
 

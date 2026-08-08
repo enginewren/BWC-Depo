@@ -24,7 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import com.blackwhitecircle.depo.data.preferences.PreferencesManager
 import com.blackwhitecircle.depo.ui.utils.SoundHelper
-
+import com.blackwhitecircle.depo.utils.VibrationHelper
 
 @Composable
 fun ScannerScreen(
@@ -88,6 +88,7 @@ fun ScannerScreen(
                                     ) {
                                         SoundHelper.playSuccess()
                                     }
+                                    VibrationHelper.vibrate(context)
                                     navController.navigate(
 
                                         "product/" +

@@ -15,6 +15,7 @@ class PreferencesManager(context: Context) {
         const val SUCCESS_SOUND = "success_sound"
         const val ERROR_SOUND = "error_sound"
         const val VIBRATION = "vibration"
+        const val STRONG_VIBRATION = "strong_vibration"
     }
 
     fun setBoolean(key: String, value: Boolean) {

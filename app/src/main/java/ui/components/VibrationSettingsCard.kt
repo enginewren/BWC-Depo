@@ -6,13 +6,33 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.blackwhitecircle.depo.data.preferences.PreferencesManager
 
 @Composable
 fun VibrationSettingsCard() {
 
-    var vibrationEnabled by remember { mutableStateOf(true) }
-    var strongVibration by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val prefs = remember { PreferencesManager(context) }
+
+    var vibrationEnabled by remember {
+        mutableStateOf(
+            prefs.getBoolean(
+                PreferencesManager.VIBRATION,
+                true
+            )
+        )
+    }
+
+    var strongVibration by remember {
+        mutableStateOf(
+            prefs.getBoolean(
+                PreferencesManager.STRONG_VIBRATION,
+                false
+            )
+        )
+    }
 
     Text(
         text = "Titreşim ayarlarını buradan yönetebilirsiniz.",
@@ -26,6 +46,10 @@ fun VibrationSettingsCard() {
         checked = vibrationEnabled
     ) {
         vibrationEnabled = it
+        prefs.setBoolean(
+            PreferencesManager.VIBRATION,
+            it
+        )
     }
 
     Spacer(modifier = Modifier.height(12.dp))
@@ -35,5 +59,9 @@ fun VibrationSettingsCard() {
         checked = strongVibration
     ) {
         strongVibration = it
+        prefs.setBoolean(
+            PreferencesManager.STRONG_VIBRATION,
+            it
+        )
     }
 }
