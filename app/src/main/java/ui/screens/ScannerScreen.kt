@@ -22,6 +22,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import com.blackwhitecircle.depo.data.preferences.PreferencesManager
+import com.blackwhitecircle.depo.ui.utils.SoundHelper
+
 
 @Composable
 fun ScannerScreen(
@@ -29,6 +32,9 @@ fun ScannerScreen(
 ) {
 
     val context = LocalContext.current
+    val prefs = remember {
+        PreferencesManager(context)
+    }
 
     val options = GmsBarcodeScannerOptions.Builder()
         .setBarcodeFormats(
@@ -74,6 +80,14 @@ fun ScannerScreen(
 
                                 if (urun != null && urun.success) {
 
+                                    if (
+                                        prefs.getBoolean(
+                                            PreferencesManager.BARCODE_SOUND,
+                                            true
+                                        )
+                                    ) {
+                                        SoundHelper.playSuccess()
+                                    }
                                     navController.navigate(
 
                                         "product/" +

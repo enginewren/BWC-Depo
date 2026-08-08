@@ -83,6 +83,19 @@ fun HomeScreen(
 
                     onRightClick = {
 
+                        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            vibrator.vibrate(
+                                VibrationEffect.createWaveform(
+                                    longArrayOf(0, 40),
+                                    -1
+                                )
+                            )
+                        }
+
+                        navController.navigate("settings")
+
                     }
                 )
 

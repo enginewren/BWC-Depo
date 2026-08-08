@@ -22,5 +22,8 @@ interface ApiService {
         @Query("koli") koli: String,
         @Query("palet") palet: String
     ): Call<SaveResponse>
-
+    @GET("exec")
+    fun ping(
+        @Query("action") action: String = "ping"
+    ): Call<SaveResponse>
 }
